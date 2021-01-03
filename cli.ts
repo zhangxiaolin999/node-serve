@@ -65,22 +65,22 @@ app.post('/login', (req, res) => {
   })
   promise.then((info) => {
     let user = JSON.parse(info.toString())
-    let params = JSON.parse(Base64.decode(...Object.keys(req.body)));
+    // let params = JSON.parse(Base64.decode(...Object.keys(req.body)));
+    let params = JSON.parse(JSON.stringify(req.body))
     try {
       if (codeText.toUpperCase() !== params.code.toUpperCase()) {
         res.status(200).send({ code: 3001, message: '验证码错误' })
         return
       }
-      if (params.user === user.user && Number(params.password) === user.password) {
+      if (params.username === user.user && params.password === user.password) {
         let token = createToken(user)
         res.status(200).send({ code: 200, message: '登录成功', token: token })
       } else {
         res.status(200).send({ code: 3000, message: '密码错误' })
       }
     } catch (err) {
-      res.status(200).send({ code: 3000, message: '密码错误' })
+      res.status(200).send({ code: 3000, message: '接口错误' })
     }
-
   })
 })
 
